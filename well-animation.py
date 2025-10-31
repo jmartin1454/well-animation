@@ -9,13 +9,19 @@ import matplotlib.animation as animation
 
 from math import *
 
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-s', dest='save', action='store_true')
+args = parser.parse_args()
+
 hbar = 1.05e-34 # J*s
 a = 1e-9 # m
 m = 9.11e-31 # kg
-nmax = 1000
-dt = 1e-19 # s
-nframes = 1000
-npoints = 100
+nmax = 1000 # number of Fourier components
+dt = 1e-18 # s
+nframes = 1000 # number of frames for animation
+npoints = 100 # number of points along the x-axis to graph
 
 def E(n):
     return hbar**2*pi**2*n**2/(2*m*a**2)
@@ -43,7 +49,7 @@ x = np.linspace(0, a, npoints)
 t = 0
 
 line2 = ax.plot(x, psisquared(x,t))[0]
-ax.set(xlabel='x [m]', ylabel='Prob density')
+ax.set(ylim=[0,2],xlabel='x [m]', ylabel='Prob density')
 # plt.show() # use to test
 
 def update(frame):
@@ -54,6 +60,7 @@ def update(frame):
 
 
 ani = animation.FuncAnimation(fig=fig, func=update, frames=nframes, interval=.1)
-writergif = animation.PillowWriter(fps=30)
-ani.save('well-animation.gif', writer = writergif)
+if args.save:
+    writergif = animation.PillowWriter(fps=30)
+    ani.save('well-animation.gif', writer = writergif)
 plt.show()
